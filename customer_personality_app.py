@@ -9,6 +9,9 @@ import seaborn as sns
 # Load the dataset
 data = pd.read_csv('marketing_campaign.csv', sep='\t')
 
+# Drop rows with NaN values
+data.dropna(inplace=True)
+
 # Title and Introduction
 st.title("Customer Personality Analysis")
 st.write("""
