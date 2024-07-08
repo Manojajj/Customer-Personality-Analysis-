@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import StandardScaler, LabelEncoder
 from sklearn.cluster import KMeans
 from mlxtend.frequent_patterns import apriori, association_rules
 import matplotlib.pyplot as plt
@@ -32,6 +32,12 @@ selected_columns = st.multiselect('Select columns for clustering', columns, defa
 if selected_columns:
     st.write(f"Selected columns for clustering: {selected_columns}")
     if len(selected_columns) >= 2:
+        # Convert categorical variables if present
+        label_encoder = LabelEncoder()
+        for col in selected_columns:
+            if data[col].dtype == 'object':
+                data[col] = label_encoder.fit_transform(data[col])
+
         scaler = StandardScaler()
         scaled_data = scaler.fit_transform(data[selected_columns])
 
@@ -43,9 +49,12 @@ if selected_columns:
 
         # Visualize Clusters
         st.subheader('Cluster Visualization')
-        fig, ax = plt.subplots()
-        sns.scatterplot(x=data[selected_columns[0]], y=data[selected_columns[1]], hue=data['Cluster'], palette='viridis', ax=ax)
-        st.pyplot(fig)
+        if len(selected_columns) >= 2:
+            fig, ax = plt.subplots()
+            sns.scatterplot(x=data[selected_columns[0]], y=data[selected_columns[1]], hue=data['Cluster'], palette='viridis', ax=ax)
+            st.pyplot(fig)
+        else:
+            st.write("Please select at least two columns for clustering visualization.")
     else:
         st.write("Please select at least two columns for clustering visualization.")
 else:
