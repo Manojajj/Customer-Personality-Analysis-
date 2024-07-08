@@ -7,16 +7,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Load the dataset
-@st.cache
-def load_data(url):
-    data = pd.read_csv(url)
-    return data
-
-# Provide the URL to your CSV file on GitHub
-url = 'marketing_campaign.csv'
-
-data = load_data(url)
-
+data = pd.read_csv(r'marketing_campaign.csv', sep='\t')
+ 
 # Title and Introduction
 st.title("Customer Personality Analysis")
 st.write("""
