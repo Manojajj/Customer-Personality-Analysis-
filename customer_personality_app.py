@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Title and Introduction
-st.title("Customer Personality Analysis")
+st.title("Customer Segmentation App")
 st.write("""
     Upload a CSV or Excel file containing customer data. This application uses KMeans clustering to analyze customer personality data.
 """)
