@@ -7,8 +7,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Load the dataset
-data = pd.read_csv(r'marketing_campaign.csv', sep='\t')
- 
+data = pd.read_csv('marketing_campaign.csv', sep='\t')
+
 # Title and Introduction
 st.title("Customer Personality Analysis")
 st.write("""
@@ -28,18 +28,18 @@ selected_columns = st.multiselect('Select columns for clustering', columns, defa
 
 if selected_columns:
     st.write(f"Selected columns for clustering: {selected_columns}")
-    scaler = StandardScaler()
-    scaled_data = scaler.fit_transform(data[selected_columns])
-
-    # Clustering
-    st.subheader('Clustering')
-    num_clusters = st.slider('Select number of clusters', 2, 10, 3)
-    kmeans = KMeans(n_clusters=num_clusters)
-    data['Cluster'] = kmeans.fit_predict(scaled_data)
-
-    # Visualize Clusters
-    st.subheader('Cluster Visualization')
     if len(selected_columns) >= 2:
+        scaler = StandardScaler()
+        scaled_data = scaler.fit_transform(data[selected_columns])
+
+        # Clustering
+        st.subheader('Clustering')
+        num_clusters = st.slider('Select number of clusters', 2, 10, 3)
+        kmeans = KMeans(n_clusters=num_clusters)
+        data['Cluster'] = kmeans.fit_predict(scaled_data)
+
+        # Visualize Clusters
+        st.subheader('Cluster Visualization')
         fig, ax = plt.subplots()
         sns.scatterplot(x=data[selected_columns[0]], y=data[selected_columns[1]], hue=data['Cluster'], palette='viridis', ax=ax)
         st.pyplot(fig)
@@ -54,7 +54,8 @@ min_support = st.slider('Select minimum support', 0.01, 0.5, 0.1)
 min_threshold = st.slider('Select minimum threshold for association rules', 0.1, 1.0, 0.5)
 
 # Ensure columns used for apriori algorithm are in the dataset
-if 'ID' in data.columns and 'MntWines' in data.columns and 'MntFruits' in data.columns:
+required_columns = ['ID', 'MntWines', 'MntFruits']
+if all(col in data.columns for col in required_columns):
     basket = (data.groupby(['ID'])[['MntWines', 'MntFruits']]
               .sum().applymap(lambda x: 1 if x > 0 else 0))
 
