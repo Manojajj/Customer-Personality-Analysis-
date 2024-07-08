@@ -7,7 +7,15 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Load the dataset
-data = pd.read_csv('marketing_campaign.csv')
+@st.cache
+def load_data(url):
+    data = pd.read_csv(url)
+    return data
+
+# Provide the URL to your CSV file on GitHub
+url = 'marketing_campaign.csv'
+
+data = load_data(url)
 
 # Title and Introduction
 st.title("Customer Personality Analysis")
@@ -22,7 +30,9 @@ if st.checkbox('Show raw data'):
 
 # Data Preprocessing
 st.subheader('Data Preprocessing')
-selected_columns = st.multiselect('Select columns for clustering', data.columns.tolist(), default=['Income', 'Age', 'MntWines', 'MntFruits'])
+columns = data.columns.tolist()
+default_columns = ['Income', 'Age', 'MntWines', 'MntFruits']
+selected_columns = st.multiselect('Select columns for clustering', columns, default=[col for col in default_columns if col in columns])
 
 scaler = StandardScaler()
 scaled_data = scaler.fit_transform(data[selected_columns])
@@ -35,9 +45,12 @@ data['Cluster'] = kmeans.fit_predict(scaled_data)
 
 # Visualize Clusters
 st.subheader('Cluster Visualization')
-fig, ax = plt.subplots()
-sns.scatterplot(x=data[selected_columns[0]], y=data[selected_columns[1]], hue=data['Cluster'], palette='viridis', ax=ax)
-st.pyplot(fig)
+if len(selected_columns) >= 2:
+    fig, ax = plt.subplots()
+    sns.scatterplot(x=data[selected_columns[0]], y=data[selected_columns[1]], hue=data['Cluster'], palette='viridis', ax=ax)
+    st.pyplot(fig)
+else:
+    st.write("Please select at least two columns for clustering visualization.")
 
 # Apriori Algorithm
 st.subheader('Market Basket Analysis with Apriori Algorithm')
